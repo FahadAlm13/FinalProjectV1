@@ -34,22 +34,13 @@ public class RecyclingRequestService {
     }
 
     // Add a new recycling request
-    public void addRecyclingRequest(RecyclingRequest recyclingRequest, Integer facilityId, Integer supplierId) {
+    public void addRecyclingRequest(RecyclingRequest recyclingRequest, Integer facilityId) {
         Facility facility = facilityRepository.findFacilityById(facilityId);
-        Supplier supplier = supplierRepository.findSupplierById(supplierId);
 
-        if (facility == null && supplier == null) {
+        if (facility == null ) {
             throw new ApiException("Both Facility and Supplier do not exist");
         }
-
-        if (facility != null) {
-            recyclingRequest.setFacility_recycle(facility);
-        }
-
-        if (supplier != null) {
-            recyclingRequest.setSupplier_recycle(supplier);
-        }
-
+        recyclingRequest.setFacility_recycle(facility);
         recyclingRequestRepository.save(recyclingRequest);
     }
 

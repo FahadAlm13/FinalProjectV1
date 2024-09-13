@@ -1,5 +1,6 @@
 package spring.boot.fainalproject.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -41,6 +42,7 @@ public class Supplier {
     @OneToOne
     @MapsId
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     // One-to-many relationship with Offer
@@ -52,5 +54,9 @@ public class Supplier {
 
     @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL) // OneToMany relationship with Product
     private Set<Product> products;
+
+    @ManyToOne
+    @JsonIgnore
+    private PriceOffer supplier_price_offer;
 
 }

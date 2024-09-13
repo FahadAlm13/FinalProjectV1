@@ -3,8 +3,10 @@ package spring.boot.fainalproject.Controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import spring.boot.fainalproject.Model.RecyclingRequest;
+import spring.boot.fainalproject.Model.User;
 import spring.boot.fainalproject.Service.RecyclingRequestService;
 
 @RestController
@@ -25,10 +27,10 @@ public class RecyclingRequestController {
     }
 
     @PostMapping
-    public ResponseEntity addRecyclingRequest(@Valid @RequestBody RecyclingRequest recyclingRequest,
-                                              @RequestParam Integer facilityId,
-                                              @RequestParam Integer supplierId) {
-        recyclingRequestService.addRecyclingRequest(recyclingRequest, facilityId, supplierId);
+    public ResponseEntity addRecyclingRequest(@AuthenticationPrincipal User user,
+                                              @Valid @RequestBody RecyclingRequest recyclingRequest
+                                              ) {
+        recyclingRequestService.addRecyclingRequest(recyclingRequest,user.getId());
         return ResponseEntity.status(201).body("Recycling request added successfully");
     }
 

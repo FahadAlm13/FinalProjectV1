@@ -1,6 +1,8 @@
 package spring.boot.fainalproject.Model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -34,16 +36,16 @@ public class RecyclingRequest {
     @Column(columnDefinition = "varchar(1000) not null")
     private String description;
 
-    @OneToOne(cascade = CascadeType.ALL ,mappedBy = "recyclingRequest")
-    @PrimaryKeyJoinColumn
-    private PriceOffer priceOffer;
-
-    @ManyToOne
-    @JsonIgnore
+    @ManyToOne// Ensure the correct column name
+    @JsonBackReference
     private Facility facility_recycle;
 
     @ManyToOne
     @JsonIgnore
     private Supplier supplier_recycle;
+
+    @ManyToOne
+    @JsonIgnore
+    private PriceOffer price_offer;
 
 }

@@ -30,7 +30,7 @@ public class FacilityRequest {
     @Column(columnDefinition = "int not null")
     private int quantity;
 
-    @Column(columnDefinition = "varchar(10) not null")
+    @Column(columnDefinition = "varchar(10) ")
     @Pattern(regexp = "PENDING|APPROVED|REJECTED|CANCELED", message = "Status must be either PENDING|APPROVED|REJECTED|CANCELED")
     private String status;
 

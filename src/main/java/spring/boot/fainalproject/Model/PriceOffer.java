@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
+import java.util.Set;
+
 @Entity
 @Data
 @Getter
@@ -27,13 +29,20 @@ public class PriceOffer {
     @Pattern(regexp = "PENDING|APPROVED|REJECTED|CANCELED", message = "Status must be either PNDING|APPROVED|REJECTED|CANCELED")
     private String status;
 
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "recyclingRequest")
-    private RecyclingRequest recyclingRequest;
 
-    @OneToOne
-    @JoinColumn(name = "offer_id", referencedColumnName = "id")
-    @JsonIgnore
-    private Offer offer;
+    @OneToMany(mappedBy = "price_offer")
+    private Set<RecyclingRequest> recyclingRequests;
+
+    @OneToMany(mappedBy = "supplier_price_offer")
+    private Set<Supplier> suppliers;
+
+//    @OneToOne
+//    @MapsId
+//    @JoinColumn(name = "recyclingRequest")
+//    private RecyclingRequest recyclingRequest;
+//
+//    @OneToOne
+//    @JoinColumn(name = "offer_id", referencedColumnName = "id")
+//    @JsonIgnore
+//    private Offer offer;
 }

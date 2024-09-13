@@ -1,5 +1,7 @@
 package spring.boot.fainalproject.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -45,6 +47,7 @@ public class Facility {
     @OneToOne
     @MapsId
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     @OneToMany(cascade = CascadeType.ALL , mappedBy = "facility")
@@ -54,6 +57,7 @@ public class Facility {
     private Set<Order> orders;
 
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "facility_recycle")
+    @JsonManagedReference
     private Set<RecyclingRequest> recyclingRequests;
 
 

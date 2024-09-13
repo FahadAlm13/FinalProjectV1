@@ -47,7 +47,6 @@ public class CustomerService {
         customer.setUser(user);
         customerRepository.save(customer);
 
-
     }
 
     public void updateCustomer(CustomerDTO customerDTO,Integer customerId){
