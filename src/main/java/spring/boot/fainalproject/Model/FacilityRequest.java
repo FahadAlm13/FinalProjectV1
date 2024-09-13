@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -28,6 +29,10 @@ public class FacilityRequest {
     @NotNull(message = " quantity cannot be null" )
     @Column(columnDefinition = "int not null")
     private int quantity;
+
+    @Column(columnDefinition = "varchar(10) not null")
+    @Pattern(regexp = "PENDING|APPROVED|REJECTED|CANCELED", message = "Status must be either PENDING|APPROVED|REJECTED|CANCELED")
+    private String status;
 
     @NotBlank(message = " description cannot be null")
     @Column(columnDefinition = "varchar(1000) not null")

@@ -5,4 +5,5 @@ import org.springframework.stereotype.Repository;
 import spring.boot.fainalproject.Model.Offer;
 @Repository
 public interface OfferRepository extends JpaRepository<Offer,Integer> {
+    Offer findOfferById(Integer id);
 }

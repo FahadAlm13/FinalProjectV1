@@ -30,10 +30,11 @@ public class ConfigSecurity {
                 .and()
                 .authenticationProvider(daoAuthenticationProvider())
                 .authorizeHttpRequests()
-                .requestMatchers("/api/v1/facility/register").permitAll()
+                .requestMatchers("/api/v1/supplier/**").permitAll()  // Allow all requests for supplier endpoint
                 .anyRequest().authenticated()
                 .and().logout().logoutUrl("/api/v1/user/logout").deleteCookies("JSESSIONID")
-                .invalidateHttpSession(true).and().httpBasic();
+                .invalidateHttpSession(true)
+                .and().httpBasic();
 
         return http.build();
     }

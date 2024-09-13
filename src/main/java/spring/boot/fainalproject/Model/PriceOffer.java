@@ -1,5 +1,6 @@
 package spring.boot.fainalproject.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -30,4 +31,9 @@ public class PriceOffer {
     @MapsId
     @JoinColumn(name = "recyclingRequest")
     private RecyclingRequest recyclingRequest;
+
+    @OneToOne
+    @JoinColumn(name = "offer_id", referencedColumnName = "id")
+    @JsonIgnore
+    private Offer offer;
 }

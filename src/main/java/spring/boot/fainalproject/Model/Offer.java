@@ -35,6 +35,9 @@ public class Offer {
 
     @ManyToOne
     @JsonIgnore
-//    @JoinColumn(name = "supplier_id" , referencedColumnName = "id")
     private Supplier supplier;
+
+    @OneToOne(mappedBy = "offer", cascade = CascadeType.ALL)
+    private PriceOffer priceOffer;
+
 }

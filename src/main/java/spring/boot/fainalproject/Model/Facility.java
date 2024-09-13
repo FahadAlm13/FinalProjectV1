@@ -22,14 +22,7 @@ public class Facility {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotEmpty(message = "username cannot be empty")
-    @Column(columnDefinition = "varchar(15) not null unique")
-    private String username;
 
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$")
-    @NotBlank(message = "Password cannot be null")
-    @Column(columnDefinition = "varchar(300) not null")
-    private String password;
 
     @NotBlank(message = "Email cannot be null")
     @Email(message = "Must be a valid email format")
@@ -37,11 +30,11 @@ public class Facility {
     private String email;
 
     @NotBlank(message = "commerical Register cannot be null")
-    @Column(columnDefinition = "varchar(15) not null unique")
+    @Column(columnDefinition = "varchar(255) not null unique")
     private String commericalRegister;
 
     @NotBlank(message = "license Number cannot be null")
-    @Column(columnDefinition = "varchar(15) not null unique")
+    @Column(columnDefinition = "varchar(255) not null unique")
     private String licenseNumber;
 
     @NotBlank(message = "Phone number cannot be null")

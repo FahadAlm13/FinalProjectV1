@@ -1,10 +1,7 @@
 package spring.boot.fainalproject.Model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +21,8 @@ public class Review {
     private Integer id;
 
     @Positive(message = "enter valid rate")
+    @Min(1)
+    @Max(5)
     @Pattern(regexp = "^[1-5]$",message = "Enter number 1 to 5")
     @Column(columnDefinition = "int not null check(rate<=5)")
     private int rate;

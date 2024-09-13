@@ -5,4 +5,5 @@ import org.springframework.stereotype.Repository;
 import spring.boot.fainalproject.Model.Facility;
 @Repository
 public interface FacilityRepository extends JpaRepository<Facility,Integer> {
+    Facility findFacilityById(Integer id);
 }

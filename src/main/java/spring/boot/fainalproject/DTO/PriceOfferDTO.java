@@ -31,6 +31,6 @@ public class PriceOfferDTO {
     private double price;
 
     @NotBlank(message = "status cannot be null")
-    @Pattern(regexp = "PENDING|APPROVED|REJECTED|CANCELED", message = "Status must be either PNDING|APPROVED|REJECTED|CANCELED")
+    @Pattern(regexp = "PENDING|APPROVED|REJECTED|CANCELED", message = "Status must be either PENDING|APPROVED|REJECTED|CANCELED")
     private String status;
 }

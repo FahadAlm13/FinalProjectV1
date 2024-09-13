@@ -36,8 +36,7 @@ public class Customer {
 
     @OneToMany(cascade = CascadeType.ALL , mappedBy = "customer_orders")
     private Set<Order> orders;
-//    @OneToMany(cascade = CascadeType.ALL,mappedBy = "customer")
-//    private Set<Order> orders;
+
 
 
 

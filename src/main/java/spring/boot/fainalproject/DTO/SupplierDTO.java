@@ -30,10 +30,10 @@ public class SupplierDTO {
     @Pattern(regexp = "^05\\d{8}$", message = "Phone number must start with '05' and be 10 digits long")
     private String phoneNumber;
 
-    @NotBlank(message = "commerical Register cannot be null")
+    @NotNull(message = "commerical Register cannot be null")
     private String commericalRegister;
 
-    @NotBlank(message = "license Number cannot be null")
+    @NotNull(message = "license Number cannot be null")
     private String licenseNumber;
 }
 

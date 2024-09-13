@@ -22,7 +22,7 @@ public class SupplierService {
     public List<Supplier> getAllSuppliers() {
         return supplierRepository.findAll();
     }
-    private void registerSupplier(SupplierDTO supplierDTO) {
+    public void registerSupplier(SupplierDTO supplierDTO) {
         User user = new User();
         user.setUsername(supplierDTO.getUsername());
         user.setName(supplierDTO.getName());
@@ -34,10 +34,13 @@ public class SupplierService {
         Supplier supplier = new Supplier();
         supplier.setEmail(supplierDTO.getEmail());
         supplier.setPhoneNumber(supplierDTO.getPhoneNumber());
+        supplier.setCommercialRegister(supplierDTO.getCommericalRegister());
+        supplier.setLicenseNumber(supplierDTO.getLicenseNumber());
+
         supplier.setUser(user);
         supplierRepository.save(supplier);
     }
-    private void updateSupplier(Integer supplier_id, SupplierDTO supplierDTO) {
+    public void updateSupplier(Integer supplier_id, SupplierDTO supplierDTO) {
         Supplier supplier = supplierRepository.findSupplierById(supplier_id);
         if (supplier == null) {
             throw new ApiException("Supplier not found");
@@ -48,8 +51,13 @@ public class SupplierService {
         String hash = new BCryptPasswordEncoder().encode(supplierDTO.getPassword());
         user.setPassword(hash);
         user.setRole("SUPPLIER");
+
         supplier.setEmail(supplierDTO.getEmail());
         supplier.setPhoneNumber(supplierDTO.getPhoneNumber());
+        supplier.setCommercialRegister(supplierDTO.getCommericalRegister());
+        supplier.setLicenseNumber(supplierDTO.getLicenseNumber());
+
+        supplier.setUser(user);
 
         authRepository.save(user);
         supplierRepository.save(supplier);

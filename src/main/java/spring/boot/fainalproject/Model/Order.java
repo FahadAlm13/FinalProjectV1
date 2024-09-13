@@ -2,6 +2,7 @@ package spring.boot.fainalproject.Model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,11 +36,13 @@ public class Order {
     @Column(columnDefinition = "double not null")
     private double totalAmount;
 
-    @NotEmpty(message = "shipping can not be null")
-    @Column(columnDefinition = "varchar(50) not null")
-    // pattr..
+    @Column(columnDefinition = "enum('Standard','Priority','Express')")
+    @Pattern(regexp = "Standard|Priority|Express", message = "Please choose one of the following: 'Standard', 'Priority', or 'Express'.")
     private String shippingMethod;
 
+    @NotEmpty(message = "image requirement")
+    @Pattern(regexp = "^.*\\.(jpg|jpeg|png|gif)$", message = "Please provide a valid image URL (jpg, jpeg, png, gif).")
+    @Column(columnDefinition = "varchar(255) not null")
     private String imgURL;
 
     @ManyToOne
@@ -54,7 +57,7 @@ public class Order {
     @JsonIgnore
     private Set<Product> products;
 
-    @OneToMany(cascade = CascadeType.ALL,mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private Set<Review> reviews;
 
 

@@ -1,6 +1,8 @@
 package spring.boot.fainalproject.Model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -38,9 +40,17 @@ public class Product {
     @Size(min = 5, max = 100, message = "max length 100 for description")
     private String description;
 
-
+    @NotEmpty(message = "image requirement")
+    @Pattern(regexp = "^.*\\.(jpg|jpeg|png|gif)$", message = "Please provide a valid image URL (jpg, jpeg, png, gif).")
+    @Column(columnDefinition = "varchar(255) not null")
     private String imgURL;
 
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "products")
     private Set<Order> orders;
+
+    @ManyToOne
+    @JsonIgnore
+    private Supplier supplier;
+
+
 }
