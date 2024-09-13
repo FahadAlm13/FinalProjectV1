@@ -34,7 +34,7 @@ public class PriceOfferService {
     }
 
     public void createPriceOffer(Integer recycle_id, Integer supplier_id, PriceOffer priceOffer) {
-        RecyclingRequest recyclingRequest = recyclingRequestRepository.findRecyclingRequestByid(recycle_id);
+        RecyclingRequest recyclingRequest = recyclingRequestRepository.findRecyclingRequestById(recycle_id);
         if (recyclingRequest == null) {
             throw new ApiException("Recycling Request not found");
         }

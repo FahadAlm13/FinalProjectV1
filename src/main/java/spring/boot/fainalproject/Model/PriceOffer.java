@@ -10,7 +10,7 @@ import lombok.*;
 import java.util.Set;
 
 @Entity
-@Data
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -26,23 +26,16 @@ public class PriceOffer {
 
     @NotBlank(message = "status cannot be null")
     @Column(columnDefinition = "varchar(10) not null")
-    @Pattern(regexp = "PENDING|APPROVED|REJECTED|CANCELED", message = "Status must be either PNDING|APPROVED|REJECTED|CANCELED")
+    @Pattern(regexp = "PENDING|APPROVED|REJECTED|CANCELED", message = "Status must be either PENDING|APPROVED|REJECTED|CANCELED")
     private String status;
 
 
     @OneToMany(mappedBy = "price_offer")
     private Set<RecyclingRequest> recyclingRequests;
 
+
     @OneToMany(mappedBy = "supplier_price_offer")
     private Set<Supplier> suppliers;
 
-//    @OneToOne
-//    @MapsId
-//    @JoinColumn(name = "recyclingRequest")
-//    private RecyclingRequest recyclingRequest;
-//
-//    @OneToOne
-//    @JoinColumn(name = "offer_id", referencedColumnName = "id")
-//    @JsonIgnore
-//    private Offer offer;
+
 }

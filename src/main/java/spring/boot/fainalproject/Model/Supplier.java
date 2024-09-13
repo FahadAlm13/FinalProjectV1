@@ -20,7 +20,7 @@ public class Supplier {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @NotBlank(message = "Email cannot be null")
     @Email(message = "Must be a valid email format")
@@ -46,11 +46,14 @@ public class Supplier {
     private User user;
 
     // One-to-many relationship with Offer
+
     @OneToMany(mappedBy = "supplier")
     private Set<Offer> offers;
 
+
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "supplier_recycle")
     private Set<RecyclingRequest> recyclingRequests;
+
 
     @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL) // OneToMany relationship with Product
     private Set<Product> products;

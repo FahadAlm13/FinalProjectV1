@@ -21,9 +21,8 @@ public class Review {
     private Integer id;
 
     @Positive(message = "enter valid rate")
-    @Min(1)
-    @Max(5)
-    @Pattern(regexp = "^[1-5]$",message = "Enter number 1 to 5")
+    @Min(value = 1, message = "Rate must be at least 1")
+    @Max(value = 5, message = "Rate must be at most 5")
     @Column(columnDefinition = "int not null check(rate<=5)")
     private int rate;
 
@@ -34,6 +33,7 @@ public class Review {
 
     @ManyToOne
     @JoinColumn(name = "order_id", referencedColumnName = "id")
+    @JsonIgnore
     private Order order;
 
 }

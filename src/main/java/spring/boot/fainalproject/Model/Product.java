@@ -45,6 +45,7 @@ public class Product {
     @Column(columnDefinition = "varchar(255) not null")
     private String imgURL;
 
+
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "products")
     private Set<Order> orders;
 

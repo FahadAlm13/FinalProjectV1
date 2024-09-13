@@ -12,7 +12,6 @@ import lombok.*;
 import java.util.Set;
 
 @Entity
-@Data
 @Getter
 @Setter
 @NoArgsConstructor
@@ -56,9 +55,8 @@ public class Facility {
     @OneToMany(cascade = CascadeType.ALL , mappedBy = "facility_orders")
     private Set<Order> orders;
 
-    @OneToMany(cascade = CascadeType.ALL,mappedBy = "facility_recycle")
-    @JsonManagedReference
-    private Set<RecyclingRequest> recyclingRequests;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "facility_recycle")
+    private Set<RecyclingRequest> facility_recycle;
 
 }

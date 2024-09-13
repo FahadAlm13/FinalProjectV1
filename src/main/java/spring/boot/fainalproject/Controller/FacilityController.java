@@ -17,24 +17,36 @@ public class FacilityController {
     private final FacilityService facilityService;
 
     @GetMapping("/get-all-facility")
-    public ResponseEntity getAllFacility(){
+    public ResponseEntity getAllFacility() {
         return ResponseEntity.status(200).body(facilityService.getAllFacilities());
     }
+
     @PostMapping("/registerFacility")
     public ResponseEntity registerFacility(@Valid @RequestBody FacilityDTO facilityDTO) {
         facilityService.registerFacility(facilityDTO);
-        return ResponseEntity.status(200).body(new ApiResponse( "Facility registered successfully"));
+        return ResponseEntity.status(200).body(new ApiResponse("Facility registered successfully"));
     }
 
     @PutMapping("/updateFacility")
     public ResponseEntity updateFacility(@AuthenticationPrincipal User user, @Valid @RequestBody FacilityDTO facilityDTO) {
         facilityService.updateFacility(user.getId(), facilityDTO);
-        return ResponseEntity.status(200).body(new ApiResponse( "Facility updated successfully"));
+        return ResponseEntity.status(200).body(new ApiResponse("Facility updated successfully"));
 
     }
+
     @DeleteMapping("/deleteFacility")
     public ResponseEntity deleteFacility(@AuthenticationPrincipal User user) {
         facilityService.deleteFacility(user.getId());
-        return ResponseEntity.status(200).body(new ApiResponse( "Customer deleted successfully"));
+        return ResponseEntity.status(200).body(new ApiResponse("Customer deleted successfully"));
+    }
+
+    @PutMapping("/accept/{facilityRequestId}/{offerId}")
+    public ResponseEntity acceptOffer(@AuthenticationPrincipal User user,
+                                      @PathVariable Integer facilityRequestId,
+                                      @PathVariable Integer offerId
+    ) {
+
+        facilityService.acceptOffer(user.getId(), facilityRequestId, offerId);
+        return ResponseEntity.status(200).body(new ApiResponse("Offer accepted successfully"));
     }
 }

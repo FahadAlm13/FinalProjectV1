@@ -12,12 +12,11 @@ import lombok.*;
 import java.util.Set;
 
 @Entity
-@Data
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "RecyclingRequest")
+
 public class RecyclingRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,8 +35,10 @@ public class RecyclingRequest {
     @Column(columnDefinition = "varchar(1000) not null")
     private String description;
 
-    @ManyToOne// Ensure the correct column name
-    @JsonBackReference
+
+
+    @ManyToOne
+    @JsonIgnore
     private Facility facility_recycle;
 
     @ManyToOne

@@ -2,6 +2,7 @@ package spring.boot.fainalproject.Model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
@@ -32,7 +33,7 @@ public class Order {
     @Positive(message = "Enter positive number")
     private int quantity;
 
-    @NotEmpty(message = "Total amount can not be null")
+    @NotNull(message = "Total amount can not be null")
     @Column(columnDefinition = "double not null")
     private double totalAmount;
 
@@ -56,6 +57,7 @@ public class Order {
     @ManyToMany
     @JsonIgnore
     private Set<Product> products;
+
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private Set<Review> reviews;

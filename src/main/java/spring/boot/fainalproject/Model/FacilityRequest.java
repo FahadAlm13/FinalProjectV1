@@ -11,12 +11,11 @@ import lombok.*;
 import java.util.Set;
 
 @Entity
-@Data
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "Facility_Request")
+
 public class FacilityRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

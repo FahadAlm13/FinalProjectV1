@@ -26,7 +26,7 @@ public class RecyclingRequestService {
 
     // Get a specific recycling request by ID
     public RecyclingRequest getRecyclingRequestById(Integer id) {
-        RecyclingRequest recyclingRequest = recyclingRequestRepository.findRecyclingRequestByid(id);
+        RecyclingRequest recyclingRequest = recyclingRequestRepository.findRecyclingRequestById(id);
         if (recyclingRequest == null) {
             throw new ApiException("Recycling request not found");
         }
@@ -34,7 +34,7 @@ public class RecyclingRequestService {
     }
 
     // Add a new recycling request
-    public void addRecyclingRequest(RecyclingRequest recyclingRequest, Integer facilityId) {
+    public void addRecyclingRequest(Integer facilityId,RecyclingRequest recyclingRequest) {
         Facility facility = facilityRepository.findFacilityById(facilityId);
 
         if (facility == null ) {
@@ -46,7 +46,7 @@ public class RecyclingRequestService {
 
     // Update an existing recycling request
     public void updateRecyclingRequest(Integer id, RecyclingRequest updatedRequest, Integer facilityId, Integer supplierId) {
-        RecyclingRequest recyclingRequest = recyclingRequestRepository.findRecyclingRequestByid(id);
+        RecyclingRequest recyclingRequest = recyclingRequestRepository.findRecyclingRequestById(id);
         if (recyclingRequest == null) {
             throw new ApiException("Recycling request not found");
         }
@@ -75,7 +75,7 @@ public class RecyclingRequestService {
 
     // Delete a recycling request
     public void deleteRecyclingRequest(Integer id) {
-        RecyclingRequest recyclingRequest = recyclingRequestRepository.findRecyclingRequestByid(id);
+        RecyclingRequest recyclingRequest = recyclingRequestRepository.findRecyclingRequestById(id);
         if (recyclingRequest == null) {
             throw new ApiException("Recycling request not found");
         }

@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 @Entity
-@Data
+
 @Getter
 @Setter
 @NoArgsConstructor

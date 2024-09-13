@@ -30,7 +30,7 @@ public class RecyclingRequestController {
     public ResponseEntity addRecyclingRequest(@AuthenticationPrincipal User user,
                                               @Valid @RequestBody RecyclingRequest recyclingRequest
                                               ) {
-        recyclingRequestService.addRecyclingRequest(recyclingRequest,user.getId());
+        recyclingRequestService.addRecyclingRequest(user.getId() , recyclingRequest);
         return ResponseEntity.status(201).body("Recycling request added successfully");
     }
 
