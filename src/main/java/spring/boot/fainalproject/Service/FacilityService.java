@@ -5,14 +5,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import spring.boot.fainalproject.API.ApiException;
 import spring.boot.fainalproject.DTO.FacilityDTO;
-import spring.boot.fainalproject.Model.Facility;
-import spring.boot.fainalproject.Model.FacilityRequest;
-import spring.boot.fainalproject.Model.Offer;
-import spring.boot.fainalproject.Model.User;
-import spring.boot.fainalproject.Repository.AuthRepository;
-import spring.boot.fainalproject.Repository.FacilityRepository;
-import spring.boot.fainalproject.Repository.FacilityRequestRepository;
-import spring.boot.fainalproject.Repository.OfferRepository;
+import spring.boot.fainalproject.Model.*;
+import spring.boot.fainalproject.Repository.*;
 
 import java.util.List;
 
@@ -23,6 +17,8 @@ public class FacilityService {
     private final AuthRepository authRepository;
     private final FacilityRequestRepository facilityRequestRepository;
     private final OfferRepository offerRepository;
+    private final PriceOfferRepository priceOfferRepository;
+    private final RecyclingRequestRepository recyclingRequestRepository;
 
     public List<Facility> getAllFacilities(){
         return facilityRepository.findAll();
@@ -83,6 +79,7 @@ public class FacilityService {
         authRepository.delete(user);
         facilityRepository.delete(existingFacility);
     }
+
     public void acceptOffer(Integer facilityId, Integer facilityRequestId, Integer offerId) {
         // Fetch the FacilityRequest by ID
         FacilityRequest facilityRequest = facilityRequestRepository.findFacilityRequestById(facilityRequestId);
@@ -113,4 +110,81 @@ public class FacilityService {
             }
         }
     }
+
+
+    public List<FacilityRequest> getAllRequestsMadeByFacility(Integer userId) {
+        Facility facility = facilityRepository.findFacilityById(userId);
+        List<FacilityRequest> requests = facilityRequestRepository.findByFacility(facility);
+        return requests;
+
+    }
+
+
+    public void rejectOffer(Integer facilityId, Integer facilityRequestId, Integer offerId) {
+
+        FacilityRequest facilityRequest = facilityRequestRepository.findFacilityRequestById(facilityRequestId);
+
+
+        if (!facilityRequest.getFacility().getId().equals(facilityId)) {
+            throw new ApiException("Facility does not have permission to reject this offer");
+        }
+
+
+        Offer rejectedOffer = offerRepository.findOfferById(offerId);
+
+
+        if (!rejectedOffer.getFacilityRequest().getId().equals(facilityRequestId)) {
+            throw new ApiException("Offer does not belong to the facility request");
+        }
+
+
+        rejectedOffer.setStatus("REJECTED");
+        offerRepository.save(rejectedOffer);
+    }
+    // للريسايكل
+    public void approvePriceOffer(Integer facilityId, Integer priceOfferId) {
+        // Fetch the PriceOffer by ID
+        PriceOffer priceOffer = priceOfferRepository.findPriceOfferById(priceOfferId);
+
+        // Ensure the status is PENDING before approving
+        if (!"PENDING".equals(priceOffer.getStatus())) {
+            throw new IllegalStateException("PriceOffer cannot be approved as it is not in PENDING status");
+        }
+
+        // Fetch the RecyclingRequest associated with this PriceOffer
+        RecyclingRequest recyclingRequest = recyclingRequestRepository.findByPriceOfferId(priceOfferId);
+
+        // Ensure the Facility is linked to the RecyclingRequest
+        if (!recyclingRequest.getFacility_recycle().getId().equals(facilityId)) {
+            throw new IllegalStateException("Facility does not have the right to approve this PriceOffer");
+        }
+
+        // Approve the PriceOffer
+        priceOffer.setStatus("APPROVED");
+        priceOfferRepository.save(priceOffer);
+    }
+
+
+    public void rejectPriceOffer(Integer facilityId, Integer priceOfferId) {
+        // Fetch the PriceOffer by ID
+        PriceOffer priceOffer = priceOfferRepository.findPriceOfferById(priceOfferId);
+
+        // Ensure the status is PENDING before rejecting
+        if (!"PENDING".equals(priceOffer.getStatus())) {
+            throw new IllegalStateException("PriceOffer cannot be rejected as it is not in PENDING status");
+        }
+
+        // Fetch the RecyclingRequest associated with this PriceOffer
+        RecyclingRequest recyclingRequest = recyclingRequestRepository.findByPriceOfferId(priceOfferId);
+
+        // Ensure the Facility is linked to the RecyclingRequest
+        if (!recyclingRequest.getFacility_recycle().getId().equals(facilityId)) {
+            throw new IllegalStateException("Facility does not have the right to reject this PriceOffer");
+        }
+
+        // Reject the PriceOffer
+        priceOffer.setStatus("REJECTED");
+        priceOfferRepository.save(priceOffer);
+    }
+
 }

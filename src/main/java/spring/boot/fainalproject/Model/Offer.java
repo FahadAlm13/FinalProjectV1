@@ -37,7 +37,6 @@ public class Offer {
     @JsonIgnore
     private Supplier supplier;
 
-//    @OneToOne(mappedBy = "offer", cascade = CascadeType.ALL)
-//    private PriceOffer priceOffer;
+
 
 }

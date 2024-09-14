@@ -39,6 +39,10 @@ public class Supplier {
     @Pattern(regexp = "^05\\d{8}$",message = "Phone number most be as 05XXXXXXXX")
     private String phoneNumber;
 
+    @Column(columnDefinition = "varchar(10) default 'IRON'")
+    @Pattern(regexp = "IRON|BRONZE|SILVER|GOLD", message = "Badge must be either IRON, BRONZE, SILVER, or GOLD")
+    private String badge = "IRON";
+
     @OneToOne
     @MapsId
     @JoinColumn(name = "user_id")

@@ -54,7 +54,8 @@ public class PriceOfferService {
         }
 
         priceOffer.setStatus("PENDING");
-        recyclingRequest.setPrice_offer(priceOffer); // Set the price offer for the recycling request
+        recyclingRequest.setPrice_offer(priceOffer);// Set the price offer for the recycling request
+        supplier.setSupplier_price_offer(priceOffer);
         priceOfferRepository.save(priceOffer);       // Save the price offer
     }
 
@@ -102,6 +103,7 @@ public class PriceOfferService {
         existingPriceOffer.setStatus("CANCELLED");
         priceOfferRepository.save(existingPriceOffer);
     }
+
 
     }
 

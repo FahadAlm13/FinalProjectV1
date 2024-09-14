@@ -35,5 +35,8 @@ public class SupplierDTO {
 
     @NotNull(message = "license Number cannot be null")
     private String licenseNumber;
+
+    @Null(message = "Badge is automatically assigned and cannot be manually set")
+    private String badge;
 }
 

@@ -20,6 +20,7 @@ public class PriceOffer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     @NotNull(message = " Price cannot be null" )
     @Column(columnDefinition = "int not null")
     private double price;

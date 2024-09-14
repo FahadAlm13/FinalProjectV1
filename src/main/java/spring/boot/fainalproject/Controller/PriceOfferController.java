@@ -49,4 +49,5 @@ public class PriceOfferController {
         priceOfferService.cancelPriceOffer(priceOfferId, user.getId());
         return ResponseEntity.status(200).body("PriceOffer deleted successfully");
     }
+
 }
