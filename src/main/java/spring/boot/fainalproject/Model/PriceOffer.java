@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -31,12 +32,17 @@ public class PriceOffer {
     private String status;
 
 
-    @OneToMany(mappedBy = "price_offer")
-    private Set<RecyclingRequest> recyclingRequests;
+    @ManyToOne
+    @JoinColumn(name = "recycling_request_id")
+    @JsonIgnore
+    private RecyclingRequest recyclingRequest;
+
+    @ManyToOne
+    @JoinColumn(name = "supplier_user_id")
+    @JsonIgnore
+    private Supplier supplier;
 
 
-    @OneToMany(mappedBy = "supplier_price_offer")
-    private Set<Supplier> suppliers;
 
 
 }

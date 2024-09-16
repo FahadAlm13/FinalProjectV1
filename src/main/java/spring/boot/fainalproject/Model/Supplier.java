@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -49,7 +50,6 @@ public class Supplier {
     @JsonIgnore
     private User user;
 
-    // One-to-many relationship with Offer
 
     @OneToMany(mappedBy = "supplier")
     private Set<Offer> offers;
@@ -62,8 +62,9 @@ public class Supplier {
     @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL) // OneToMany relationship with Product
     private Set<Product> products;
 
-    @ManyToOne
-    @JsonIgnore
-    private PriceOffer supplier_price_offer;
+    @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL)
+    private Set<PriceOffer> priceOffers = new HashSet<>();
+
+
 
 }

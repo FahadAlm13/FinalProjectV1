@@ -15,14 +15,14 @@ import java.util.List;
 public class SupplierService {
 
     private final SupplierRepository supplierRepository;
-    private final AuthRepository  authRepository;
+    private final AuthRepository authRepository;
     private final OfferRepository offerRepository;
     private final FacilityRequestRepository facilityRequestRepository;
-    private final PriceOfferRepository priceOfferRepository;
 
     public List<Supplier> getAllSuppliers() {
         return supplierRepository.findAll();
     }
+
     public void registerSupplier(SupplierDTO supplierDTO) {
         User user = new User();
         user.setUsername(supplierDTO.getUsername());
@@ -41,6 +41,7 @@ public class SupplierService {
         supplier.setUser(user);
         supplierRepository.save(supplier);
     }
+
     public void updateSupplier(Integer supplier_id, SupplierDTO supplierDTO) {
         Supplier supplier = supplierRepository.findSupplierById(supplier_id);
         if (supplier == null) {
@@ -73,6 +74,7 @@ public class SupplierService {
         authRepository.delete(user);
         supplierRepository.delete(supplier);
     }
+
     // Method for accepting a FacilityRequest
     public void acceptFacilityRequest(Integer supplierId, Integer facilityRequestId) {
         // Get the supplier
@@ -115,44 +117,7 @@ public class SupplierService {
         offer.setStatus("REJECTED");
         offerRepository.save(offer);
     }
-
-
     public List<Offer> getOffersBySupplierId(Integer supplierId) {
         return offerRepository.findAllBySupplierId(supplierId);
     }
-
-
-    // Method to count approved price offers and assign badges to the supplier
-    public void updateSupplierBadge(Integer supplierId) {
-        // Find the supplier by ID
-        Supplier supplier = supplierRepository.findSupplierById(supplierId);
-        if (supplier == null) {
-            throw new ApiException("Supplier not found");
-        }
-
-        // Count the number of approved price offers for this supplier
-        int approvedCount = priceOfferRepository.countApprovedPriceOffersBySupplier(supplierId);
-
-        // Assign badge based on the number of approvals
-        if (approvedCount >= 15) {
-            supplier.setBadge("GOLD");
-
-        } else if (approvedCount >= 10) {
-            supplier.setBadge("SILVER");
-        } else if (approvedCount >= 5) {
-            supplier.setBadge("BRONZE");
-            supplierRepository.save(supplier);
-        } else {
-            supplier.setBadge("IRON");
-        }
-
-        // Save the updated supplier
-        supplierRepository.save(supplier);
-    }
 }
-
-
-//    public List<RecyclingRequest> getUpcomingRequests(Integer supplierId) {
-//        return recyclingRequestRepository.findRecyclingRequestsBySupplierId(supplierId);
-//    }
-

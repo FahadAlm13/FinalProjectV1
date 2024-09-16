@@ -1,14 +1,13 @@
 package spring.boot.fainalproject.Model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -36,7 +35,6 @@ public class RecyclingRequest {
     private String description;
 
 
-
     @ManyToOne
     @JsonIgnore
     private Facility facility_recycle;
@@ -45,8 +43,10 @@ public class RecyclingRequest {
     @JsonIgnore
     private Supplier supplier_recycle;
 
-    @ManyToOne
+    @OneToMany(mappedBy = "recyclingRequest", cascade = CascadeType.ALL)
     @JsonIgnore
-    private PriceOffer price_offer;
+    private Set<PriceOffer> priceOffers = new HashSet<>();
+
+
 
 }

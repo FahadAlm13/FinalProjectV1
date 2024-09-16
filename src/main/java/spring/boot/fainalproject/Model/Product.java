@@ -40,6 +40,10 @@ public class Product {
     @Size(min = 5, max = 100, message = "max length 100 for description")
     private String description;
 
+    @NotEmpty(message = "category can not be null")
+    @Column(columnDefinition = "varchar(100) not null")
+    private String category;
+
     @NotEmpty(message = "image requirement")
     @Pattern(regexp = "^.*\\.(jpg|jpeg|png|gif)$", message = "Please provide a valid image URL (jpg, jpeg, png, gif).")
     @Column(columnDefinition = "varchar(255) not null")

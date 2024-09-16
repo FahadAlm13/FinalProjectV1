@@ -29,25 +29,30 @@ public class PriceOfferController {
     public ResponseEntity createPriceOffer(@AuthenticationPrincipal User user,
                                            @RequestParam Integer recycleId,
 
-                                           @Valid @RequestBody PriceOffer priceOffer) {
-        priceOfferService.createPriceOffer(recycleId, user.getId(), priceOffer);
+                                           @RequestParam Double priceOffer) {
+        priceOfferService.createPriceOffer(user.getId(), recycleId, priceOffer);
         return ResponseEntity.status(200).body("PriceOffer created successfully");
     }
-
-    @PutMapping("/update/{priceOfferId}")
-    public ResponseEntity updatePriceOffer(@AuthenticationPrincipal User user,
-                                           @PathVariable Integer priceOfferId,
-                                           @Valid @RequestBody PriceOffer updatedPriceOffer) {
-        priceOfferService.updatePriceOffer(priceOfferId, user.getId(), updatedPriceOffer);
-        return ResponseEntity.status(200).body("PriceOffer updated successfully");
+    @PutMapping("/approvePriceOffer/{priceOfferId}")
+    public ResponseEntity approvePriceOffer(@AuthenticationPrincipal User user ,@PathVariable Integer priceOfferId) {
+        priceOfferService.approvePriceOffer(user.getId(), priceOfferId);
+        return ResponseEntity.status(200).body("PriceOffer approved successfully");
     }
 
-    @DeleteMapping("/delete/{priceOfferId}")
-    public ResponseEntity deletePriceOffer(@AuthenticationPrincipal User user,
-                                           @PathVariable Integer priceOfferId
-    ) {
-        priceOfferService.cancelPriceOffer(priceOfferId, user.getId());
-        return ResponseEntity.status(200).body("PriceOffer deleted successfully");
-    }
+//    @PutMapping("/update/{priceOfferId}")
+//    public ResponseEntity updatePriceOffer(@AuthenticationPrincipal User user,
+//                                           @PathVariable Integer priceOfferId,
+//                                           @Valid @RequestBody PriceOffer updatedPriceOffer) {
+//        priceOfferService.updatePriceOffer(priceOfferId, user.getId(), updatedPriceOffer);
+//        return ResponseEntity.status(200).body("PriceOffer updated successfully");
+//    }
+//
+//    @DeleteMapping("/delete/{priceOfferId}")
+//    public ResponseEntity deletePriceOffer(@AuthenticationPrincipal User user,
+//                                           @PathVariable Integer priceOfferId
+//    ) {
+//        priceOfferService.cancelPriceOffer(priceOfferId, user.getId());
+//        return ResponseEntity.status(200).body("PriceOffer deleted successfully");
+//    }
 
 }

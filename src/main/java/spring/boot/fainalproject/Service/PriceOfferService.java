@@ -11,7 +11,6 @@ import spring.boot.fainalproject.Repository.RecyclingRequestRepository;
 import spring.boot.fainalproject.Repository.SupplierRepository;
 
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -33,77 +32,92 @@ public class PriceOfferService {
         return priceOffer;
     }
 
-    public void createPriceOffer(Integer recycle_id, Integer supplier_id, PriceOffer priceOffer) {
-        RecyclingRequest recyclingRequest = recyclingRequestRepository.findRecyclingRequestById(recycle_id);
-        if (recyclingRequest == null) {
-            throw new ApiException("Recycling Request not found");
+    // Supplier creates a price offer
+    public void createPriceOffer(Integer supplierId, Integer recyclingRequestId, double price) {
+        Supplier supplier = supplierRepository.findById(supplierId)
+                .orElseThrow(() -> new ApiException("Supplier not found"));
+
+        RecyclingRequest recyclingRequest = recyclingRequestRepository.findById(recyclingRequestId)
+                .orElseThrow(() -> new ApiException("Recycling Request not found"));
+
+        // Ensure the supplier has not already made an offer for this request
+        if (priceOfferRepository.existsBySupplierAndRecyclingRequest(supplier, recyclingRequest)) {
+            throw new ApiException("Price offer already submitted for this request.");
         }
 
-        Supplier supplier = supplierRepository.findSupplierById(supplier_id);
-        if (supplier == null) {
-            throw new ApiException("Supplier not found");
-        }
-
-        // Check if the supplier has already submitted a price offer for this recycling request
-        if (recyclingRequest.getPrice_offer() != null) {
-            for (Supplier existingSupplier : recyclingRequest.getPrice_offer().getSuppliers()) {
-                if (existingSupplier.getId() == supplier.getId()) {
-                    throw new ApiException("You have already submitted a price offer for this recycling request.");
-                }
-            }
-        }
-
+        // Create and save the price offer
+        PriceOffer priceOffer = new PriceOffer();
+        priceOffer.setPrice(price);
         priceOffer.setStatus("PENDING");
-        recyclingRequest.setPrice_offer(priceOffer);// Set the price offer for the recycling request
-        supplier.setSupplier_price_offer(priceOffer);
-        priceOfferRepository.save(priceOffer);       // Save the price offer
+        priceOffer.setSupplier(supplier);
+        priceOffer.setRecyclingRequest(recyclingRequest);
+        priceOfferRepository.save(priceOffer);
     }
 
-    public void updatePriceOffer(Integer priceOfferId, Integer supplierId, PriceOffer updatedPriceOffer) {
-        PriceOffer existingPriceOffer = priceOfferRepository.findPriceOfferById(priceOfferId);
-        if (existingPriceOffer == null) {
-            throw new ApiException("Price Offer not found");
+    //     Facility approves a price offer
+    public void approvePriceOffer(Integer facilityId, Integer priceOfferId) {
+        PriceOffer priceOffer = priceOfferRepository.findById(priceOfferId)
+                .orElseThrow(() -> new ApiException("Price Offer not found"));
+
+        RecyclingRequest recyclingRequest = priceOffer.getRecyclingRequest();
+        if (!recyclingRequest.getFacility_recycle().getId().equals(facilityId)) {
+            throw new ApiException("Facility not authorized to approve this offer.");
         }
 
-        // Ensure that the supplier is the one who created this price offer
-        boolean supplierFound = false;
-        for (Supplier supplier : existingPriceOffer.getSuppliers()) {
-            if (supplier.getId() == supplierId) {
-                supplierFound = true;
-                break;
-            }
-        }
+        priceOffer.setStatus("APPROVED");
+        priceOfferRepository.save(priceOffer);
 
-        if (!supplierFound) {
-            throw new ApiException("You do not have permission to update this price offer.");
-        }
+        // Reject other offers for this recycling request
+        List<PriceOffer> otherOffers = priceOfferRepository.findByRecyclingRequestAndStatus(recyclingRequest, "PENDING");
+        otherOffers.forEach(offer -> {
+            offer.setStatus("REJECTED");
+            priceOfferRepository.save(offer);
+        });
 
-        existingPriceOffer.setPrice(updatedPriceOffer.getPrice());
-        existingPriceOffer.setStatus("PENDING");
-        priceOfferRepository.save(existingPriceOffer);
-    }
-    public void cancelPriceOffer(Integer priceOfferId, Integer supplierId) {
-        PriceOffer existingPriceOffer = priceOfferRepository.findPriceOfferById(priceOfferId);
-        if (existingPriceOffer == null) {
-            throw new ApiException("Price Offer not found");
-        }
-
-        // Ensure that the supplier is the one who created this price offer
-        boolean supplierFound = false;
-        for (Supplier supplier : existingPriceOffer.getSuppliers()) {
-            if (supplier.getId()== supplierId) {
-                supplierFound = true;
-                break;
-            }
-        }
-
-        if (!supplierFound) {
-            throw new ApiException("You do not have permission to delete this price offer.");
-        }
-        existingPriceOffer.setStatus("CANCELLED");
-        priceOfferRepository.save(existingPriceOffer);
+        // Update supplier's badge based on approved price offers
+        updateSupplierBadge(priceOffer.getSupplier());
     }
 
+    // Badge update logic for supplier based on approved price offers
+    private void updateSupplierBadge(Supplier supplier) {
+        int approvedOffersCount = priceOfferRepository.countBySupplier(supplier);
 
+        if (approvedOffersCount >= 6) {
+            supplier.setBadge("GOLD");
+        } else if (approvedOffersCount >= 4) {
+            supplier.setBadge("SILVER");
+        } else if (approvedOffersCount >= 2) {
+            supplier.setBadge("BRONZE");
+        } else {
+            supplier.setBadge("IRON");
+        }
+
+        supplierRepository.save(supplier);
     }
 
+    public void updatePriceOffer(Integer supplierId, Integer priceOfferId, double price) {
+        PriceOffer priceOffer = priceOfferRepository.findById(priceOfferId)
+                .orElseThrow(() -> new ApiException("Price Offer not found"));
+
+        if (!priceOffer.getSupplier().getId().equals(supplierId)) {
+            throw new ApiException("You are not authorized to update this price offer.");
+        }
+
+        priceOffer.setPrice(price);
+        priceOffer.setStatus("PENDING");
+        priceOfferRepository.save(priceOffer);
+    }
+
+
+    public void cancelPriceOffer(Integer supplierId, Integer priceOfferId) {
+        PriceOffer priceOffer = priceOfferRepository.findById(priceOfferId)
+                .orElseThrow(() -> new ApiException("Price Offer not found"));
+
+        if (!priceOffer.getSupplier().getId().equals(supplierId)) {
+            throw new ApiException("You are not authorized to cancel this price offer.");
+        }
+
+        priceOffer.setStatus("CANCELED");
+        priceOfferRepository.save(priceOffer);
+    }
+}

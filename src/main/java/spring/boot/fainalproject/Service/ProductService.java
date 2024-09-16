@@ -5,9 +5,12 @@ import org.springframework.stereotype.Service;
 import spring.boot.fainalproject.API.ApiException;
 import spring.boot.fainalproject.Model.Product;
 import spring.boot.fainalproject.Model.Supplier;
+import spring.boot.fainalproject.Model.User;
+import spring.boot.fainalproject.Repository.AuthRepository;
 import spring.boot.fainalproject.Repository.ProductRepository;
 import spring.boot.fainalproject.Repository.SupplierRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,6 +19,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final SupplierRepository supplierRepository;
+    private final AuthRepository authRepository;
 
     // Get all products
     public List<Product> getAllProducts() {
@@ -57,8 +61,9 @@ public class ProductService {
         product.setPrice(updatedProduct.getPrice());
         product.setQuantity(updatedProduct.getQuantity());
         product.setDescription(updatedProduct.getDescription());
+        product.setCategory(updatedProduct.getCategory());
         product.setImgURL(updatedProduct.getImgURL());
-        product.setSupplier(supplier); // Update the supplier of the product
+        product.setSupplier(supplier);
 
         productRepository.save(product);
     }
@@ -71,4 +76,52 @@ public class ProductService {
         }
         productRepository.delete(product);
     }
+
+    //search for products by product name
+    // extra 8
+    public List<Product> searchProduct(String keyword) {
+        if (productRepository.findProductByProductName(keyword).isEmpty()){
+            throw new ApiException("Product not found");
+        }else {
+            return productRepository.findProductByProductName(keyword);
+        }
+    }
+
+    //get product by category
+    //extra 10
+    public List<Product> searchByCategory(String category) {
+        if (productRepository.findProductByCategory(category).isEmpty()){
+            throw new ApiException("Product by this category not found");
+        }else {
+            List<Product> products = productRepository.findProductByCategory(category);
+            products.forEach(product -> product.setOrders(null));
+            return products;
+        }
+    }
+
+    // Method to get the best-selling product for a supplier
+    //extra 9
+    public List<Product> getBestSellingProductBySupplier(Integer supplierId) {
+        User user =authRepository.findUserById(supplierId);
+        List<Product> products = productRepository.findBestSellingProductBySupplierId(supplierId);
+            // Return the top product if available
+            if (products.isEmpty()) {
+                throw new ApiException("You dont have product yet");
+            }else {
+                return products;
+            }
+        }
+    //Alert supplier if quantity less than 3
+    //extra 13
+    public List<Product> alertSupplier(Integer supplierId) {
+        List<Product> checkQuantity = productRepository.findProductBySupplierID(supplierId);
+        List<Product> lessThan =new ArrayList<>();
+        for (Product product : checkQuantity) {
+            if (product.getQuantity()<=3){
+                lessThan.add(product);
+            }
+        }
+        return lessThan;
+    }
+
 }

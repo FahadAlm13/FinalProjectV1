@@ -42,5 +42,15 @@ public class OrderController {
         orderService.deleteOrder(orderId, user.getId());
         return ResponseEntity.status(200).body("order deleted successfully");
     }
+    @PutMapping("/supplier-shipping-order/{orderId}")
+    public ResponseEntity supplierShippingOrder(@AuthenticationPrincipal User user,@PathVariable Integer orderId) {
+        orderService.SupplierShippedOrder(user.getId(), orderId);
+        return ResponseEntity.status(200).body("supplier shipped order successfully");
+    }
+
+    @GetMapping("/recent-order-supplier")
+    public ResponseEntity recentOrderSupplier(@AuthenticationPrincipal User user) {
+        return ResponseEntity.status(200).body(orderService.getTodaysOrdersForSupplier(user.getId()));
+    }
 }
 

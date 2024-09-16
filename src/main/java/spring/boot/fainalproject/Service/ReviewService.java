@@ -17,7 +17,6 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
 
     private final OrderRepository orderRepository;
-    private final CustomerRepository customerRepository;
 
     public List<Review> findAllReviewsByOrderId() {
         return reviewRepository.findAll();

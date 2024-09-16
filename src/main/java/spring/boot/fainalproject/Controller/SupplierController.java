@@ -29,7 +29,7 @@ public class SupplierController {
     @PostMapping
     public ResponseEntity registerSupplier(@Valid @RequestBody SupplierDTO supplierDTO) {
         supplierService.registerSupplier(supplierDTO);
-        return ResponseEntity.status(200).body(supplierService.getAllSuppliers());
+        return ResponseEntity.status(200).body(new ApiResponse("Successes add supplier"));
     }
     @PutMapping
     public ResponseEntity updateSupplier(@AuthenticationPrincipal User user, @Valid @RequestBody SupplierDTO supplierDTO) {
@@ -63,13 +63,13 @@ public class SupplierController {
     }
 
     // Endpoint to update and check the supplier's badge
-    @PutMapping("/update-badge")
-    public ResponseEntity<ApiResponse> updateSupplierBadge(@AuthenticationPrincipal User user) {
-        // Update the badge for the logged-in supplier
-        supplierService.updateSupplierBadge(user.getId());
-
-        return ResponseEntity.status(200).body(new ApiResponse("Badge updated based on the approved price offers"));
-    }
+//    @PutMapping("/update-badge")
+//    public ResponseEntity<ApiResponse> updateSupplierBadge(@AuthenticationPrincipal User user) {
+//        // Update the badge for the logged-in supplier
+//        supplierService.updateSupplierBadge(user.getId());
+//
+//        return ResponseEntity.status(200).body(new ApiResponse("Badge updated based on the approved price offers"));
+//    }
 
 
 //    @GetMapping("/requests-recycle")

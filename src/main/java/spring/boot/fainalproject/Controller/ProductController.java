@@ -3,8 +3,10 @@ package spring.boot.fainalproject.Controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import spring.boot.fainalproject.Model.Product;
+import spring.boot.fainalproject.Model.User;
 import spring.boot.fainalproject.Service.ProductService;
 
 @RestController
@@ -43,9 +45,35 @@ public class ProductController {
     }
 
     // Delete a product
-    @DeleteMapping("/deleteProduct/{id}")
-    public ResponseEntity deleteProduct(@PathVariable Integer id) {
-        productService.deleteProduct(id);
+    @DeleteMapping("/deleteProduct")
+    public ResponseEntity deleteProduct(@AuthenticationPrincipal User user ) {
+        productService.deleteProduct(user.getId());
         return ResponseEntity.status(200).body("Product deleted successfully");
     }
+
+    //search product
+    //this is new......
+    @GetMapping("/search-product/{keyWord}")
+    public ResponseEntity searchProduct(@PathVariable String keyWord) {
+        return ResponseEntity.status(200).body(productService.searchProduct(keyWord));
+    }
+
+    // get the best-selling product for a supplier
+    //this new also......
+    @GetMapping("/best-seller")
+    public ResponseEntity getBestSellingProduct(@AuthenticationPrincipal User user) {
+        return ResponseEntity.status(200).body(productService.getBestSellingProductBySupplier(user.getId()));
+    }
+
+    //search by category
+    //new endpoint
+    @GetMapping("/search-by-category/{category}")
+    public ResponseEntity getProductsByCategory(@PathVariable String category) {
+        return ResponseEntity.status(200).body(productService.searchByCategory(category));
+    }
+    @GetMapping("/alertSupplier")
+    public ResponseEntity alertSupplier(@AuthenticationPrincipal User user) {
+        return ResponseEntity.status(200).body(productService.alertSupplier(user.getId()));
+    }
+
 }

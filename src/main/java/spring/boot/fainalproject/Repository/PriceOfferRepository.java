@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import spring.boot.fainalproject.Model.PriceOffer;
+import spring.boot.fainalproject.Model.RecyclingRequest;
+import spring.boot.fainalproject.Model.Supplier;
 
 import java.util.List;
 
@@ -12,8 +14,11 @@ import java.util.List;
 public interface PriceOfferRepository extends JpaRepository<PriceOffer, Integer> {
     PriceOffer findPriceOfferById(Integer id);
 
-    @Query("SELECT COUNT(po) FROM PriceOffer po JOIN po.suppliers s WHERE s.id = :supplierId AND po.status = 'APPROVED'")
-    int countApprovedPriceOffersBySupplier(@Param("supplierId") Integer supplierId);
+    boolean existsBySupplierAndRecyclingRequest(Supplier supplier, RecyclingRequest recyclingRequest);
 
+    List<PriceOffer> findByRecyclingRequestAndStatus(RecyclingRequest recyclingRequest, String status);
+
+    @Query("SELECT COUNT(po) FROM PriceOffer po WHERE po.supplier = :supplier AND po.status = 'APPROVED'")
+    int countBySupplier(@Param("supplier") Supplier supplier);
 
 }

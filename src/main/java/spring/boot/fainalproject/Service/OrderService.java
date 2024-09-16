@@ -6,6 +6,7 @@ import spring.boot.fainalproject.API.ApiException;
 import spring.boot.fainalproject.Model.*;
 import spring.boot.fainalproject.Repository.*;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class OrderService {
     private final FacilityRepository facilityRepository;
     private final ProductRepository productRepository;
 
-    //extra endpoint
+    //extra endpoint يبيلها تعديل
     public List<Order> getAllOrder(Integer userId){
         if (!orderRepository.findOrdersByFacilityId(userId).isEmpty()){
             return orderRepository.findOrdersByFacilityId(userId);
@@ -42,6 +43,7 @@ public class OrderService {
 
     //extra endpoint
     // this method change
+    // extra 3
     public void addNewOrder(Integer productId, Order order, Integer userId) {
         // Find the user
         User user = authRepository.findUserById(userId);
@@ -72,19 +74,20 @@ public class OrderService {
                     totalAmount += product.getPrice();
                 }
                 if (order.getShippingMethod().equals("Priority")) {
-                    order.setTotalAmount(totalAmount + 24);
+                    order.setTotalAmount(getDiscount(user.getId(),totalAmount) + 24);
                 } else if (order.getShippingMethod().equals("Express")) {
-                    order.setTotalAmount(totalAmount + 50);
+                    order.setTotalAmount(getDiscount(user.getId(),totalAmount) + 50);
                 } else {
-                    order.setTotalAmount(totalAmount);
+                    order.setTotalAmount(getDiscount(user.getId(),totalAmount));
                 }
+
                 // Update product quantity and manage relationships
                 product.setQuantity(product.getQuantity() - order.getQuantity());
                 order.getProducts().add(product);
+                order.setOrderStatus("Pending");
                 product.getOrders().add(order);
 
                 // Save both order and product
-                customerRepository.save(customer);
                 orderRepository.save(order);
                 productRepository.save(product);
             }
@@ -115,7 +118,6 @@ public class OrderService {
                 product.getOrders().add(order);
 
                 // Save both order and product
-                facilityRepository.save(facility);
                 orderRepository.save(order);
                 productRepository.save(product);
             }
@@ -124,12 +126,18 @@ public class OrderService {
         }
     }
 
-    // this method change
+    //extra endpoint
+    // this method change ......
+    // extra 4
     public void updateOrder(Order order, Integer orderId, Integer userId) {
         // Find the existing order
         Order oldOrder = orderRepository.findOrderById(orderId);
         if (oldOrder == null) {
             throw new ApiException("Order not found");
+        }
+
+        if (order.getOrderStatus().equals("Shipping")) {
+            throw new ApiException("Order status is shipping can not be updated");
         }
 
         // Find the user
@@ -187,7 +195,6 @@ public class OrderService {
             oldOrder.setShippingMethod(order.getShippingMethod());
 
             // Save the updated order and product
-            customerRepository.save(customer);
             orderRepository.save(oldOrder);
             productRepository.save(product);
         } else if (user.getRole().equalsIgnoreCase("facility")) {
@@ -229,7 +236,6 @@ public class OrderService {
             oldOrder.setShippingMethod(order.getShippingMethod());
 
             // Save the updated order and product
-            facilityRepository.save(facility);
             orderRepository.save(oldOrder);
             productRepository.save(product);
         } else {
@@ -237,19 +243,92 @@ public class OrderService {
         }
     }
 
-    // cancel
-    public void deleteOrder(Integer orderId,Integer userId){
-        if (orderRepository.findByOrderIdAndCustomerId(orderId,userId)!=null){
-            Order order = orderRepository.findByOrderIdAndCustomerId(orderId,userId);
-            order.getProducts().remove(productRepository.findProductById(orderId));
-            orderRepository.deleteById(orderId);
-        }else if (orderRepository.findOrderByIdAndFacilityId(orderId,userId)!=null){
-            Order order = orderRepository.findOrderByIdAndFacilityId(orderId,userId);
-            order.getProducts().remove(productRepository.findProductById(orderId));
-            orderRepository.deleteById(orderId);
-        }else {
-            throw new ApiException("Order not found");
+    //
+    public void deleteOrder(Integer orderId, Integer userId) {
+        Order order = orderRepository.findByOrderIdAndCustomerId(orderId, userId);
+
+        // Check if the order belongs to a customer
+        if (order != null) {
+            //check status of ordered
+            if (order.getOrderStatus().equals("shipped")) {
+                throw new ApiException("Order status is shipped can not be Cancel");
+            }else {
+                // change status of product as cancel
+                order.setOrderStatus("Cancel");
+                orderRepository.save(order);
+            }
+        } else {
+            // Check if the order belongs to a facility
+            order = orderRepository.findOrderByIdAndFacilityId(orderId, userId);
+            if (order != null) {
+                //check status of ordered
+                if (order.getOrderStatus().equals("shipped")) {
+                    throw new ApiException("Order status is shipped can not be Cancel");
+                }else {
+                    // change status of product as cancel
+                    order.setOrderStatus("Cancel");
+                    orderRepository.save(order);
+                }
+            } else {
+                throw new ApiException("Order not found for the given user (customer or facility).");
+            }
         }
+    }
+
+    //get discount if customer or facility have more than 5 orders
+    //extra 12
+    public int getDiscount(Integer userId,int totalAmount) {
+        User user1 = authRepository.findUserById(userId);
+        Integer totalOrdersHave=0;
+        if (user1.getRole().equals("FACILITY")) {
+            totalOrdersHave= orderRepository.countOrdersByFacilityId(userId);
+            if (totalOrdersHave>=5){
+                double discount=0.3*totalAmount;
+                discount=totalAmount-discount;
+                return (int) discount;
+            }else {
+                return 0;
+            }
+        } else if (user1.getRole().equals("CUSTOMER")) {
+            totalOrdersHave= orderRepository.countOrdersByCustomerId(userId);
+            System.out.println(totalAmount+" "+" "+totalOrdersHave);
+            if (totalOrdersHave>=5){
+                double discount=0.3*totalAmount;
+                discount=totalAmount-discount;
+                return (int) discount;
+            }else {
+                return totalAmount;
+            }
+        }else {
+            return totalAmount;
+        }
+    }
+
+
+    //extra 13
+    // Method to allow supplier to change the status of their orders if they own all the products
+    public void SupplierShippedOrder(Integer supplierId, Integer orderId) {
+        Order order = orderRepository.findOrderById(orderId);
+
+        // Check if all products in the order are owned by the same supplier
+        boolean allProductsFromSupplier = order.getProducts().stream()
+                .allMatch(product -> product.getSupplier().getId() == supplierId);
+
+        if (!allProductsFromSupplier) {
+            throw new ApiException("Supplier does not have permission to update this order, as not all products belong to them.");
+        }
+
+        if (order.getOrderStatus().equalsIgnoreCase("Cancel") || order.getOrderStatus().equalsIgnoreCase("Shipped")) {
+            throw new ApiException("Order status cannot be updated. The order is either canceled or already shipped.");
+        }
+        order.setOrderStatus("shipped");
+        orderRepository.save(order);
+
+    }
+
+    //edite this and try to do it
+    public List<Order> getTodaysOrdersForSupplier(Integer supplierId) {
+        return orderRepository.findOrdersBySupplierIdAndDate(supplierId, LocalDate.now());
     }
 }
 

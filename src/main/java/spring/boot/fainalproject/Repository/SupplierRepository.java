@@ -6,4 +6,6 @@ import spring.boot.fainalproject.Model.Supplier;
 @Repository
 public interface SupplierRepository extends JpaRepository<Supplier,Integer> {
     Supplier findSupplierById(Integer id);
+
+
 }

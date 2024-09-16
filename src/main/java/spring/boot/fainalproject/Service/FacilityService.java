@@ -19,11 +19,13 @@ public class FacilityService {
     private final OfferRepository offerRepository;
     private final PriceOfferRepository priceOfferRepository;
     private final RecyclingRequestRepository recyclingRequestRepository;
+    private final SupplierRepository supplierRepository;
 
-    public List<Facility> getAllFacilities(){
+    public List<Facility> getAllFacilities() {
         return facilityRepository.findAll();
 
     }
+
     public void registerFacility(FacilityDTO facilityDTO) {
         User user = new User();
         user.setUsername(facilityDTO.getUsername());
@@ -69,6 +71,7 @@ public class FacilityService {
         authRepository.save(user);
         facilityRepository.save(existingFacility);
     }
+
     public void deleteFacility(Integer facility_id) {
         Facility existingFacility = facilityRepository.findFacilityById(facility_id);
         if (existingFacility == null) {
@@ -141,50 +144,5 @@ public class FacilityService {
         rejectedOffer.setStatus("REJECTED");
         offerRepository.save(rejectedOffer);
     }
-    // للريسايكل
-    public void approvePriceOffer(Integer facilityId, Integer priceOfferId) {
-        // Fetch the PriceOffer by ID
-        PriceOffer priceOffer = priceOfferRepository.findPriceOfferById(priceOfferId);
-
-        // Ensure the status is PENDING before approving
-        if (!"PENDING".equals(priceOffer.getStatus())) {
-            throw new IllegalStateException("PriceOffer cannot be approved as it is not in PENDING status");
-        }
-
-        // Fetch the RecyclingRequest associated with this PriceOffer
-        RecyclingRequest recyclingRequest = recyclingRequestRepository.findByPriceOfferId(priceOfferId);
-
-        // Ensure the Facility is linked to the RecyclingRequest
-        if (!recyclingRequest.getFacility_recycle().getId().equals(facilityId)) {
-            throw new IllegalStateException("Facility does not have the right to approve this PriceOffer");
-        }
-
-        // Approve the PriceOffer
-        priceOffer.setStatus("APPROVED");
-        priceOfferRepository.save(priceOffer);
-    }
-
-
-    public void rejectPriceOffer(Integer facilityId, Integer priceOfferId) {
-        // Fetch the PriceOffer by ID
-        PriceOffer priceOffer = priceOfferRepository.findPriceOfferById(priceOfferId);
-
-        // Ensure the status is PENDING before rejecting
-        if (!"PENDING".equals(priceOffer.getStatus())) {
-            throw new IllegalStateException("PriceOffer cannot be rejected as it is not in PENDING status");
-        }
-
-        // Fetch the RecyclingRequest associated with this PriceOffer
-        RecyclingRequest recyclingRequest = recyclingRequestRepository.findByPriceOfferId(priceOfferId);
-
-        // Ensure the Facility is linked to the RecyclingRequest
-        if (!recyclingRequest.getFacility_recycle().getId().equals(facilityId)) {
-            throw new IllegalStateException("Facility does not have the right to reject this PriceOffer");
-        }
-
-        // Reject the PriceOffer
-        priceOffer.setStatus("REJECTED");
-        priceOfferRepository.save(priceOffer);
-    }
-
 }
+

@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @Getter
@@ -40,6 +41,14 @@ public class Order {
     @Column(columnDefinition = "enum('Standard','Priority','Express')")
     @Pattern(regexp = "Standard|Priority|Express", message = "Please choose one of the following: 'Standard', 'Priority', or 'Express'.")
     private String shippingMethod;
+
+    //supplier shipped the product
+    @Pattern(regexp = "Cancel|Pending|shipped")
+    @Column(columnDefinition = "enum('Cancel','pending','Shipped')")
+    private String orderStatus;
+
+    @Column(columnDefinition = "varchar(200)")
+    private LocalDate orderedDate=LocalDate.now();
 
     @NotEmpty(message = "image requirement")
     @Pattern(regexp = "^.*\\.(jpg|jpeg|png|gif)$", message = "Please provide a valid image URL (jpg, jpeg, png, gif).")

@@ -9,6 +9,8 @@ import spring.boot.fainalproject.Model.RecyclingRequest;
 import spring.boot.fainalproject.Model.User;
 import spring.boot.fainalproject.Service.RecyclingRequestService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/recycling-request")
 @RequiredArgsConstructor
@@ -48,4 +50,9 @@ public class RecyclingRequestController {
         recyclingRequestService.deleteRecyclingRequest(id);
         return ResponseEntity.status(200).body("Recycling request deleted successfully");
     }
+//    @GetMapping("/pending")
+//    public ResponseEntity getAllRecyclingRequestsWithPendingStatus() {
+//        List<RecyclingRequest> pendingRequests = recyclingRequestService.getAllRecyclingRequestsWithPendingStatus();
+//        return ResponseEntity.status(200).body(pendingRequests);
+//    }
 }
