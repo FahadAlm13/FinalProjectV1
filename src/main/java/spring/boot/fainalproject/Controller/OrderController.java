@@ -15,9 +15,13 @@ import spring.boot.fainalproject.Service.OrderService;
 public class OrderController {
     private final OrderService orderService;
 
-    @GetMapping("/get-order-by-userId/{orderId}")
-    public ResponseEntity findOrderByUserId(Integer orderId, @AuthenticationPrincipal User user) {
-        return ResponseEntity.status(200).body(orderService.getOrderById(orderId, user.getId()));
+    @GetMapping("/get-all")
+    public ResponseEntity getAllOrders(@AuthenticationPrincipal User user) {
+        return ResponseEntity.status(200).body(orderService.getAllOrders());
+    }
+    @GetMapping("/get-order-by-id/{orderId}")
+    public ResponseEntity findOrderByUserId(@AuthenticationPrincipal User user,@PathVariable Integer orderId) {
+        return ResponseEntity.status(200).body(orderService.getOrderById( user.getId(), orderId));
     }
 
     @GetMapping("/get-all-by-userId")

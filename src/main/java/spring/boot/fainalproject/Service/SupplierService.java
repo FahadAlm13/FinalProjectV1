@@ -120,4 +120,13 @@ public class SupplierService {
     public List<Offer> getOffersBySupplierId(Integer supplierId) {
         return offerRepository.findAllBySupplierId(supplierId);
     }
+    // extraaaa
+    public List<Supplier> getAllGoldBadgeSuppliers() {
+        return supplierRepository.findAllByBadgeGold();
+    }
+    // This endpoint lets you dynamically filter suppliers based on their badge (e.g., IRON, BRONZE, SILVER, GOLD).
+    public List<Supplier> getSuppliersByBadge(String badge) {
+        return supplierRepository.findSuppliersByBadge(badge);
+    }
+
 }

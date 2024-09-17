@@ -18,17 +18,17 @@ public class RecyclingRequestController {
 
     private final RecyclingRequestService recyclingRequestService;
 
-    @GetMapping
-    public ResponseEntity getAllRecyclingRequests() {
+    @GetMapping("/getAllRecyclingRequests")
+    public ResponseEntity getAllRecyclingRequests(@AuthenticationPrincipal User user) {
         return ResponseEntity.status(200).body(recyclingRequestService.getAllRecyclingRequests());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity getRecyclingRequestById(@PathVariable Integer id) {
-        return ResponseEntity.status(200).body(recyclingRequestService.getRecyclingRequestById(id));
+    @GetMapping("/getRecyclingRequestById/{id}")
+    public ResponseEntity getRecyclingRequestById(@AuthenticationPrincipal User user ,@PathVariable Integer id) {
+        return ResponseEntity.status(200).body(recyclingRequestService.getRecyclingRequestById(user.getId() , id));
     }
 
-    @PostMapping
+    @PostMapping("/addRecyclingRequest")
     public ResponseEntity addRecyclingRequest(@AuthenticationPrincipal User user,
                                               @Valid @RequestBody RecyclingRequest recyclingRequest
                                               ) {
@@ -36,23 +36,24 @@ public class RecyclingRequestController {
         return ResponseEntity.status(201).body("Recycling request added successfully");
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/updateRecyclingRequest/{id}")
     public ResponseEntity updateRecyclingRequest(@PathVariable Integer id,
                                                  @Valid @RequestBody RecyclingRequest recyclingRequest,
-                                                 @RequestParam Integer facilityId,
+                                                 @AuthenticationPrincipal User user,
                                                  @RequestParam Integer supplierId) {
-        recyclingRequestService.updateRecyclingRequest(id, recyclingRequest, facilityId, supplierId);
+        recyclingRequestService.updateRecyclingRequest(id, recyclingRequest, user.getId(), supplierId);
         return ResponseEntity.status(200).body("Recycling request updated successfully");
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity deleteRecyclingRequest(@PathVariable Integer id) {
-        recyclingRequestService.deleteRecyclingRequest(id);
+    @DeleteMapping("/deleteRecyclingRequest/{id}")
+    public ResponseEntity deleteRecyclingRequest(@AuthenticationPrincipal User user ,@PathVariable Integer id) {
+        recyclingRequestService.deleteRecyclingRequest(user.getId() , id);
         return ResponseEntity.status(200).body("Recycling request deleted successfully");
     }
-//    @GetMapping("/pending")
-//    public ResponseEntity getAllRecyclingRequestsWithPendingStatus() {
-//        List<RecyclingRequest> pendingRequests = recyclingRequestService.getAllRecyclingRequestsWithPendingStatus();
-//        return ResponseEntity.status(200).body(pendingRequests);
-//    }
+    @GetMapping("/no-price-offers")
+    public ResponseEntity<List<RecyclingRequest>> getRecyclingRequestsWithNoPriceOffers(@AuthenticationPrincipal User user) {
+        List<RecyclingRequest> requests = recyclingRequestService.getRecyclingRequestsWithNoPriceOffers();
+        return ResponseEntity.status(200).body(requests);
+    }
+
 }

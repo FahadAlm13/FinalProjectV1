@@ -6,6 +6,7 @@ import spring.boot.fainalproject.API.ApiException;
 import spring.boot.fainalproject.Model.PriceOffer;
 import spring.boot.fainalproject.Model.RecyclingRequest;
 import spring.boot.fainalproject.Model.Supplier;
+import spring.boot.fainalproject.Model.User;
 import spring.boot.fainalproject.Repository.PriceOfferRepository;
 import spring.boot.fainalproject.Repository.RecyclingRequestRepository;
 import spring.boot.fainalproject.Repository.SupplierRepository;
@@ -24,7 +25,7 @@ public class PriceOfferService {
         return priceOfferRepository.findAll();
     }
 
-    public PriceOffer getPriceOfferById(Integer id) {
+    public PriceOffer getPriceOfferById(Integer user_id , Integer id) {
         PriceOffer priceOffer = priceOfferRepository.findPriceOfferById(id);
         if (priceOffer == null) {
             throw new ApiException("Price Offer not found");
@@ -120,4 +121,13 @@ public class PriceOfferService {
         priceOffer.setStatus("CANCELED");
         priceOfferRepository.save(priceOffer);
     }
+    //This endpoint returns all price offers that a supplier has submitted and that have been approved.
+    public List<PriceOffer> getApprovedOffersBySupplier(Integer supplierId) {
+        return priceOfferRepository.findApprovedOffersBySupplierId(supplierId);
+    }
+    //This returns all the pending price offers for recycling requests from a specific facility.
+    public List<PriceOffer> getPendingOffersByFacility(Integer facilityId) {
+        return priceOfferRepository.findPendingOffersByFacilityId(facilityId);
+    }
+
 }

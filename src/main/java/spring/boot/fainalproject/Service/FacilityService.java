@@ -144,5 +144,9 @@ public class FacilityService {
         rejectedOffer.setStatus("REJECTED");
         offerRepository.save(rejectedOffer);
     }
+
+    public List<String> getPopularRecycledProducts() {
+        return recyclingRequestRepository.findMostRecycledProducts();
+    }
 }
 

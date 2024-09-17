@@ -16,7 +16,7 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @GetMapping("/get-all")
-    public ResponseEntity getAllCustomers() {
+    public ResponseEntity getAllCustomers(@AuthenticationPrincipal User user) {
         return ResponseEntity.status(200).body(customerService.getAllCustomers());
     }
 

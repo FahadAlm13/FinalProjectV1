@@ -3,9 +3,9 @@ package spring.boot.fainalproject.Controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import spring.boot.fainalproject.Model.User;
-import spring.boot.fainalproject.Repository.AuthRepository;
 import spring.boot.fainalproject.Service.AuthService;
 
 
@@ -16,19 +16,19 @@ public class authController {
     private final AuthService authService;
 
     @GetMapping("/getAllUsers")
-    public ResponseEntity getAllUsers() {
+    public ResponseEntity getAllUsers(@AuthenticationPrincipal User user) {
         return ResponseEntity.status(200).body(authService.findAll());
     }
 
     @PutMapping("/updateUser/{id}")
-    public ResponseEntity updateUser(@Valid @RequestBody User user, @PathVariable Integer id) {
-        authService.updateUser(user, id);
+    public ResponseEntity updateUser(@Valid @RequestBody User user, @AuthenticationPrincipal User user1) {
+        authService.updateUser(user, user1.getId());
         return ResponseEntity.status(200).body("User updated successfully");
     }
 
     @DeleteMapping("/deleteUser/{id}")
-    public ResponseEntity deleteUser(@PathVariable Integer id) {
-        authService.deleteUser(id);
+    public ResponseEntity deleteUser(@AuthenticationPrincipal User user) {
+        authService.deleteUser(user.getId());
         return ResponseEntity.status(200).body("User deleted successfully");
     }
 }

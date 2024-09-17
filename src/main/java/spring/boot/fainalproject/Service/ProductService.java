@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import spring.boot.fainalproject.API.ApiException;
 import spring.boot.fainalproject.Model.Product;
 import spring.boot.fainalproject.Model.Supplier;
-import spring.boot.fainalproject.Model.User;
 import spring.boot.fainalproject.Repository.AuthRepository;
 import spring.boot.fainalproject.Repository.ProductRepository;
 import spring.boot.fainalproject.Repository.SupplierRepository;
@@ -69,7 +68,11 @@ public class ProductService {
     }
 
     // Delete a product
-    public void deleteProduct(Integer id) {
+    public void deleteProduct(Integer user_id , Integer id) {
+        Supplier user = supplierRepository.findSupplierById(user_id);
+        if (user == null) {
+            throw new ApiException("Supplier not found");
+        }
         Product product = productRepository.findProductById(id);
         if (product == null) {
             throw new ApiException("Product not found");
@@ -102,11 +105,14 @@ public class ProductService {
     // Method to get the best-selling product for a supplier
     //extra 9
     public List<Product> getBestSellingProductBySupplier(Integer supplierId) {
-        User user =authRepository.findUserById(supplierId);
+       Supplier supplier = supplierRepository.findSupplierById(supplierId);
         List<Product> products = productRepository.findBestSellingProductBySupplierId(supplierId);
+        if (supplier == null){
+            throw new ApiException("Supplier not found");
+        }
             // Return the top product if available
             if (products.isEmpty()) {
-                throw new ApiException("You dont have product yet");
+                throw new ApiException("Supplier dont have best product yet");
             }else {
                 return products;
             }

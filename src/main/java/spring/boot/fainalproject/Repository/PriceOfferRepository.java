@@ -21,4 +21,10 @@ public interface PriceOfferRepository extends JpaRepository<PriceOffer, Integer>
     @Query("SELECT COUNT(po) FROM PriceOffer po WHERE po.supplier = :supplier AND po.status = 'APPROVED'")
     int countBySupplier(@Param("supplier") Supplier supplier);
 
+    @Query("SELECT po FROM PriceOffer po WHERE po.supplier.id = :supplierId AND po.status = 'APPROVED'")
+    List<PriceOffer> findApprovedOffersBySupplierId(@Param("supplierId") Integer supplierId);
+
+    @Query("SELECT po FROM PriceOffer po WHERE po.recyclingRequest.facility_recycle.id = :facilityId AND po.status = 'PENDING'")
+    List<PriceOffer> findPendingOffersByFacilityId(@Param("facilityId") Integer facilityId);
+
 }

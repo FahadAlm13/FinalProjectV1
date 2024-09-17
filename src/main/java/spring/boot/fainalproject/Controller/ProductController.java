@@ -17,8 +17,8 @@ public class ProductController {
     private final ProductService productService;
 
     // Get all products
-    @GetMapping
-    public ResponseEntity getAllProducts() {
+    @GetMapping("/get/all")
+    public ResponseEntity getAllProducts(@AuthenticationPrincipal User user) {
         return ResponseEntity.status(200).body(productService.getAllProducts());
     }
 
@@ -29,25 +29,25 @@ public class ProductController {
     }
 
     // Add a new product by a Supplier
-    @PostMapping
-    public ResponseEntity addProduct(@RequestParam Integer supplierId, @Valid @RequestBody Product product) {
-        productService.addProduct(supplierId, product);
+    @PostMapping("/add")
+    public ResponseEntity addProduct(@AuthenticationPrincipal User user, @Valid @RequestBody Product product) {
+        productService.addProduct(user.getId(), product);
         return ResponseEntity.status(201).body("Product added successfully");
     }
 
     // Update an existing product by Supplier
     @PutMapping("/updateProduct/{id}")
     public ResponseEntity updateProduct(@PathVariable Integer id,
-                                        @RequestParam Integer supplierId,
+                                        @AuthenticationPrincipal User user,
                                         @Valid @RequestBody Product productDetails) {
-        productService.updateProduct(id, productDetails, supplierId);
+        productService.updateProduct(id, productDetails, user.getId());
         return ResponseEntity.status(200).body("Product updated successfully");
     }
 
     // Delete a product
-    @DeleteMapping("/deleteProduct")
-    public ResponseEntity deleteProduct(@AuthenticationPrincipal User user ) {
-        productService.deleteProduct(user.getId());
+    @DeleteMapping("/deleteProduct/{id}")
+    public ResponseEntity deleteProduct(@AuthenticationPrincipal User user, @PathVariable Integer id ) {
+        productService.deleteProduct(user.getId(),id);
         return ResponseEntity.status(200).body("Product deleted successfully");
     }
 
@@ -60,9 +60,9 @@ public class ProductController {
 
     // get the best-selling product for a supplier
     //this new also......
-    @GetMapping("/best-seller")
-    public ResponseEntity getBestSellingProduct(@AuthenticationPrincipal User user) {
-        return ResponseEntity.status(200).body(productService.getBestSellingProductBySupplier(user.getId()));
+    @GetMapping("/best-seller/{supplier_id}")
+    public ResponseEntity getBestSellingProduct(@PathVariable Integer supplier_id) {
+        return ResponseEntity.status(200).body(productService.getBestSellingProductBySupplier(supplier_id));
     }
 
     //search by category
@@ -75,5 +75,4 @@ public class ProductController {
     public ResponseEntity alertSupplier(@AuthenticationPrincipal User user) {
         return ResponseEntity.status(200).body(productService.alertSupplier(user.getId()));
     }
-
 }

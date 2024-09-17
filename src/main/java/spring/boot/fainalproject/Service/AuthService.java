@@ -17,6 +17,7 @@ public class AuthService {
     public List<User> findAll() {
         return authRepository.findAll();
     }
+
     public void updateUser(User user, Integer id) {
         User user1 = authRepository.findUserById(id);
         if (user1 == null) {

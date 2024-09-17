@@ -20,7 +20,7 @@ public class FacilityController {
     private final FacilityService facilityService;
 
     @GetMapping("/get-all-facility")
-    public ResponseEntity getAllFacility() {
+    public ResponseEntity getAllFacility(@AuthenticationPrincipal User user) {
         return ResponseEntity.status(200).body(facilityService.getAllFacilities());
     }
 
@@ -65,31 +65,10 @@ public class FacilityController {
         return ResponseEntity.status(200).body(requests);
     }
 
-//    @PutMapping("/approve-price/{priceOfferId}")
-//    public ResponseEntity approvePriceOffer(
-//            @AuthenticationPrincipal User user,
-//            @PathVariable Integer priceOfferId) {
-//
-//        // Approve the price offer
-//        facilityService.approvePriceOffer(user.getId(), priceOfferId);
-//
-//
-//        return ResponseEntity.status(200).body(new ApiResponse("Price offer approved successfully"));
-//
-//    }
+    @GetMapping("/popular-recycle-products")
+    public ResponseEntity getPopularRecycledProducts() {
+        List<String> popularProducts = facilityService.getPopularRecycledProducts();
+        return ResponseEntity.status(200).body(popularProducts);
+    }
 
-//    @PutMapping("/reject-price/{priceOfferId}")
-//    public ResponseEntity<ApiResponse> rejectPriceOffer(
-//            @AuthenticationPrincipal User user,
-//            @PathVariable Integer priceOfferId) {
-//
-//        // Reject the price offer
-//        facilityService.rejectPriceOffer(user.getId(), priceOfferId);
-//
-//        // Return response based on the result
-//
-//        return ResponseEntity.status(200).body(new ApiResponse("Price offer rejected successfully"));
-//
-//
-//    }
 }

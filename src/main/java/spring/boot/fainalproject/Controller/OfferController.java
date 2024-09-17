@@ -19,7 +19,7 @@ public class OfferController {
     private final OfferService offerService;
 
     @GetMapping("/get-all")
-    public ResponseEntity<List<Offer>> getAllOffers() {
+    public ResponseEntity<List<Offer>> getAllOffers(@AuthenticationPrincipal User user) {
         List<Offer> offers = offerService.getAllOffers();
         return ResponseEntity.status(200).body(offers);
     }

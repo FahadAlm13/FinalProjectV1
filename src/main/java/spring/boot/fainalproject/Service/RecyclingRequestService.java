@@ -28,7 +28,7 @@ public class RecyclingRequestService {
     }
 
     // Get a specific recycling request by ID
-    public RecyclingRequest getRecyclingRequestById(Integer id) {
+    public RecyclingRequest getRecyclingRequestById(Integer supplier_id ,Integer id) {
         RecyclingRequest recyclingRequest = recyclingRequestRepository.findRecyclingRequestById(id);
         if (recyclingRequest == null) {
             throw new ApiException("Recycling request not found");
@@ -77,8 +77,11 @@ public class RecyclingRequestService {
         Facility facility = facilityRepository.findFacilityById(facilityId);
         Supplier supplier = supplierRepository.findSupplierById(supplierId);
 
-        if (facility == null && supplier == null) {
-            throw new ApiException("Both Facility and Supplier do not exist");
+        if (facility == null ) {
+            throw new ApiException(" Facility do not exist");
+        }
+        if (supplier == null ) {
+            throw new ApiException("Supplier do not exist");
         }
 
         recyclingRequest.setProductName(updatedRequest.getProductName());
@@ -97,14 +100,25 @@ public class RecyclingRequestService {
     }
 
     // Delete a recycling request
-    public void deleteRecyclingRequest(Integer id) {
+    public void deleteRecyclingRequest(Integer facility_id ,Integer id) {
+//        Facility facility = facilityRepository.findFacilityById(facility_id);
+//        if (facility == null){
+//            throw new ApiException("Facility not found");
+//        }
         RecyclingRequest recyclingRequest = recyclingRequestRepository.findRecyclingRequestById(id);
+//        Facility facility = recyclingRequest.getFacility_recycle();
+//        if (facility.getId() != facility_id ) {
+//            throw new ApiException("You are not authorized to cancel this offer");
+//        }
         if (recyclingRequest == null) {
             throw new ApiException("Recycling request not found");
         }
         recyclingRequestRepository.delete(recyclingRequest);
     }
-
+    // This endpoint returns recycling requests that have no price offers yet.
+    public List<RecyclingRequest> getRecyclingRequestsWithNoPriceOffers() {
+        return recyclingRequestRepository.findRecyclingRequestsWithNoPriceOffers();
+    }
 
 
 }
